@@ -1,1 +1,8 @@
 env/
+.jj/
+*/__pycache__/
+**/*.ipynb_checkpoints/
+*.egg.info/
+LLMs-from-scratch/
+*/**/*ckpt*
+*/**/*.pth
