@@ -1,7 +1,26 @@
 import torch
 import numpy as np
 import tiktoken
+from chapter4 import generate_text_simple
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
+def plot_losses(epochs_seen, tokens_seen, train_losses, val_losses):
+    fig, ax1 = plt.subplots(figsize=(5, 3))
+    ax1.plot(epochs_seen, train_losses, label="Training loss")
+    ax1.plot(
+        epochs_seen, val_losses, linestyle="-.", label="Validation loss"
+    )
+    ax1.set_xlabel("Epochs")
+    ax1.set_ylabel("Loss")
+    ax1.legend(loc="upper right")
+    ax1.xaxis.set_major_locator(MaxNLocator(integer=True))
+    ax2 = ax1.twiny()
+    ax2.plot(tokens_seen, train_losses, alpha=0)
+    ax2.set_xlabel("Tokens seen")
+    fig.tight_layout()
+    plt.show()
+    
 def text_to_token_ids(text, tokenizer):
     encoded = tokenizer.encode(text, allowed_special={'<|endoftext|>'})
     encoded_tensor = torch.tensor(encoded).unsqueeze(0)
@@ -127,7 +146,7 @@ def calc_loss_loader(data_loader, model, device, num_batches=None):
             break
     return total_loss / num_batches
 
-def train_model_simple(mode, train_loader, val_loader,
+def train_model_simple(model, train_loader, val_loader,
                       optimizer, device, num_epochs,
                       eval_freq, eval_iter, start_context, tokenizer):
     train_losses, val_losses, track_tokens_seen = [], [], []
